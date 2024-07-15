@@ -1,0 +1,5 @@
+INFO:__main__:Hello World
+INFO:__main__:Hello World
+INFO:__main__:Hello World
+WARNING:__main__:Hello World
+CRITICAL:__main__:Hello World
