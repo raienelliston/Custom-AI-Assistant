@@ -32,11 +32,17 @@ class Listener(threading.Thread):
 
     async def start_listener(self):
         self.running = True
-        self.stream = sd.InputStream(device=self.audio_device, 
-                                     channels=self.channels, 
-                                     samplerate=self.sample_rate, 
-                                     blocksize=self.chunk,
-                                     callback=self._write_block)
+        if self.audio_device == "default":
+            self.stream = sd.InputStream(channels=self.channels, 
+                                         samplerate=self.sample_rate, 
+                                         blocksize=self.chunk,
+                                         callback=self._write_block)
+        else:
+            self.stream = sd.InputStream(device=self.audio_device, 
+                                        channels=self.channels, 
+                                        samplerate=self.sample_rate, 
+                                        blocksize=self.chunk,
+                                        callback=self._write_block)
         self.stream.start()
         await self.listen()
 
