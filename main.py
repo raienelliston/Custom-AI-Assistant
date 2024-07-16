@@ -6,7 +6,10 @@ from modules.listener import Listener
 from modules.text_handler import TextHandler
 from modules.script_handler import ScriptHandler
 from modules.config import Config
+from modules.timestamp import Timestamp
 
+
+timer = Timestamp()
 config = Config()
 
 class Assistant:
@@ -16,9 +19,9 @@ class Assistant:
         self.commands = queue.Queue()
 
         # Initialize module classes
-        self.voiceToText = Listener(self.rawText)
-        self.textHandler = TextHandler(self.rawText, self.commands)
-        self.scriptHandler = ScriptHandler(self.commands)
+        self.voiceToText = Listener(self.rawText, timer)
+        self.textHandler = TextHandler(self.rawText, self.commands, timer)
+        self.scriptHandler = ScriptHandler(self.commands, timer)
 
     def start(self):
         self.voiceToText.start()
@@ -36,7 +39,6 @@ class Assistant:
         self.scriptHandler.stop()
 
 if __name__ == '__main__':
-    config = Config()
     assistant = Assistant()
     assistant.start()
     while True:

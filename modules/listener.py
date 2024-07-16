@@ -8,10 +8,11 @@ import numpy as np
 config = Config()
 
 class Listener(threading.Thread):
-    def __init__(self, input_queue=[]):
+    def __init__(self, input_queue=[], timer=None):
         super().__init__()
         self.input_queue = input_queue
         self.running = False
+        self.timer = timer
 
         self.set_settings()
 
@@ -50,7 +51,7 @@ class Listener(threading.Thread):
         while self.running:
             data = self.stream.read(self.chunk)
             print(data)
-            self.input_queue.append(data)
+            self.input_queue.append([data, self.timer.get_timestamp()])
         self.stream.stop()
 
     def _write_block(self, indata, frames, time, status):
