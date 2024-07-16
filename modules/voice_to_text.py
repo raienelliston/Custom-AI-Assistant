@@ -1,4 +1,10 @@
 import threading
+import asyncio
+import pyaudio
+import wave
+from config import Config
+
+config = Config()
 
 class VoiceToText(threading.Thread):
     def __init__(self, input_queue, audio_device):
@@ -7,32 +13,37 @@ class VoiceToText(threading.Thread):
         self.audio_device = audio_device
         self.running = False
 
+        # Audio settings
+        self.format = config.get_value('format', 'int16')
+        self.chunk = config.get_value('chunk', 1024)
+        self.sample_rate = config.get_value('sample_rate', 44100)
+        self.channels = config.get_value('channels', 2)
+        self.pyaudio = pyaudio.PyAudio()
+
     def get_audio_devices(self):
         pass
 
     def get_selected_audio_device(self):
         pass
 
-    def set_audio_device(self, device):
-        pass
-
-    def start_listener(self):
+    async def start_listener(self):
         self.running = True
-        
+        self.stream = self.pyaudio.open(format=self.format,
+                                    channels=self.channels,
+                                    rate=self.sample_rate,
+                                    input=True,
+                                    input_device_index=self.audio_device,
+                                    frames_per_buffer=self.chunk)
+        await self.listen()
 
-    def pause_listener(self):
-        if self.running == False:
-            print("Listener is already paused")
-        self.running = False
+    async def _listen(self):
+        while self.running:
+            data = self.stream.read(self.chunk)
+            self.input_queue.append(data)
 
-    def unpause_listener(self):
-        if self.running == True:
-            print("Listener is already running")
-            return
-        self.running = True
 
     def stop_listener(self):
         self.running = False
 
-    def convert(self, audio):
-        return "Hello World"
+if __name__ == '__main__':
+    pass

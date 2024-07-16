@@ -13,23 +13,25 @@ class Config:
                 key, value = line.split('=')
                 self.config[key] = value
     
-    def set_value(self, key):
+    def set_value(self, key, value):
         try:
             self.config[key]
-            exists = True
+            with open(self.config_path, 'r') as file:
+                for line in file:
+                    if line.startswith(key):
+                        line = f'{key}={value}\n'
+                        file.write(line)
         except KeyError:
-            exists = False
-
-        if exists:
-            pass
-            return self.get_config()
+            with open(self.config_path, 'a') as file:
+                file.write(f'{key}={value}\n')
         
         # Else
         pass
         return self.get_config()
     
-    def get_value(self, key):
+    def get_value(self, key, default=None):
         try:
             return self.config[key]
         except KeyError:
-            return None
+            if default is not None:
+                set_value(key, default)
