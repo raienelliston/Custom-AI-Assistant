@@ -48,24 +48,23 @@ class TextHandler(threading.Thread):
                 pass
 
     def filter_text(self):
-        words = [] * max(len(x) for x in self.seperated_text)
+        words += [] * max(len(x) for x in self.seperated_text) - len(words)
         for words in self.seperated_text:
             for index, word in enumerate(words):
                 words[index].append(word)
  
+        
 
- 
         if len(words) > self.min_length:
             for word in words:
                 if not self.triggered or word == "assistant":
                     words.pop(0)
-                if word == "assistant":
-                    self.triggered = True
-                                    
-                    
-        
-
-
+                    self.timestamps.pop(0)
+                    if word == "assistant":
+                        self.triggered = True
+                else:
+                    pass
+                
     def recognize(self, audio):
         match self.api:
             case "vosk":
