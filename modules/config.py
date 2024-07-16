@@ -17,7 +17,7 @@ class Config:
     
     def set_value(self, key, value):
         all_config = ""
-
+        print(self.config_list)
         # Finds all the config keys and values and writes them to the file
         for list_key in self.config_list:
             if list_key == key:
@@ -31,12 +31,13 @@ class Config:
         with open(self.config_path, 'w') as file:
             file.write(all_config)
         
-        self.config_list = []
+        self.config_list.append(key)
         self.config[key] = value
 
     def get_value(self, key, default=None):
         try:
             return self.config[key]
         except KeyError:
+            print("fail")
             if default != None:
                 self.set_value(key, default)
